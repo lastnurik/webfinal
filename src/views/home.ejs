@@ -1,0 +1,20 @@
+<%- include('layouts/main', { title: 'Home', body: `
+  <section class="text-center mb-5">
+    <h1 class="display-6 fw-bold">Welcome to the Blog Platform</h1>
+    <p class="lead text-muted">Read and share posts. Create an account to write and comment.</p>
+    <div class="when-logged-out">
+      <a href="/auth/register" class="btn btn-primary btn-lg me-2">Get Started</a>
+      <a href="/auth/login" class="btn btn-outline-primary btn-lg">Login</a>
+    </div>
+    <div class="when-logged-in" style="display: none;">
+      <a href="/dashboard" class="btn btn-primary btn-lg">Go to Dashboard</a>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="h4 mb-3">Recent Posts</h2>
+    <div id="home-posts" class="row g-4">
+      <div class="col-12 text-muted">Loading posts...</div>
+    </div>
+  </section>
+` }) %>

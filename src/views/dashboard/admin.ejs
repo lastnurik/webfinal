@@ -1,0 +1,32 @@
+<%- include('../layouts/main', { title: 'Admin Panel', body: `
+  <div class="row mb-4">
+    <div class="col">
+      <h1 class="h3">Admin Panel</h1>
+      <p class="text-muted">Admin-only view for managing users and posts.</p>
+    </div>
+  </div>
+
+  <div class="alert alert-warning">
+    This page is reserved for users with the <strong>admin</strong> role. The API will enforce access using role-based middleware.
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">Users</h5>
+          <p class="card-text text-muted">In a full implementation, this would show a list of users with options to manage their roles.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">All Posts</h5>
+          <p class="card-text text-muted">Admins will be able to delete any post via the protected API endpoints.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+` }) %>
+

@@ -1,0 +1,115 @@
+<%- include('../layouts/main', { title: 'Dashboard', body: `
+  <div class="row mb-4">
+    <div class="col">
+      <h1 class="h3">Dashboard</h1>
+      <p id="profile-summary" class="text-muted mb-0">Loading...</p>
+    </div>
+    <div class="col-auto">
+      <button type="button" class="btn btn-primary" id="btn-new-post">New Post</button>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Your Posts</h5>
+          <div class="table-responsive">
+            <table class="table align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="posts-table-body">
+                <tr><td colspan="5" class="text-muted">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Categories</h5>
+          <p class="text-muted small mb-2">Create categories when creating a post, or add one below. Categories with no posts can be deleted.</p>
+          <div class="d-flex flex-wrap gap-2 mb-2">
+            <input type="text" class="form-control form-control-sm" id="new-category-name" placeholder="New category name" style="max-width: 200px;" />
+            <button type="button" class="btn btn-sm btn-outline-primary" id="btn-add-category">Add category</button>
+          </div>
+          <div id="categories-list" class="d-flex flex-wrap gap-2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="postModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="postModalTitle">New Post</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="post-form">
+          <div class="modal-body">
+            <input type="hidden" id="post-id" />
+            <div class="mb-3">
+              <label for="post-title" class="form-label">Title</label>
+              <input type="text" class="form-control" id="post-title" required minlength="3" />
+            </div>
+            <div class="mb-3">
+              <label for="post-content" class="form-label">Content</label>
+              <textarea class="form-control" id="post-content" rows="6" required minlength="10"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="post-category-id" class="form-label">Category</label>
+              <select class="form-select" id="post-category-id">
+                <option value="">— None —</option>
+              </select>
+              <div class="mt-1">
+                <label for="post-category-name" class="form-label small text-muted">Or type a new category name</label>
+                <input type="text" class="form-control form-control-sm" id="post-category-name" placeholder="New category name" />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="post-tags" class="form-label">Tags (comma-separated)</label>
+              <input type="text" class="form-control" id="post-tags" placeholder="e.g. tech, tutorial" />
+            </div>
+            <div class="mb-3">
+              <label for="post-status" class="form-label">Status</label>
+              <select class="form-select" id="post-status">
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="deletePostModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Delete post?</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">This cannot be undone.</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="btn-confirm-delete-post">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+` }) %>
