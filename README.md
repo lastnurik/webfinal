@@ -61,35 +61,42 @@ npm run dev
 
 The server will start on `http://localhost:5000`.
 
-## Deployment with Docker Compose
+## Deployment with Docker Compose (SRE Stack)
 
-This project includes a `Dockerfile` and `docker-compose.yml` for running the API and MongoDB in containers.
+This project is containerized with separate frontend and backend services plus a full observability stack.
 
-### 1. Build and start with Docker Compose
+### 1. Build and start everything
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
-This will:
+Services started:
 
-- Build the `api` service from the `Dockerfile`
-- Start a `mongo` service using the `mongo:6` image
-- Connect the API to MongoDB using the `MONGODB_URI` defined in `docker-compose.yml`
+- `frontend` (Nginx reverse proxy) on `http://localhost:3000`
+- `backend` (Node.js + Express) on `http://localhost:5000`
+- `mongo` (MongoDB) on `mongodb://localhost:27017`
+- `prometheus` on `http://localhost:9090`
+- `grafana` on `http://localhost:3001` (admin/admin)
+- `node-exporter` on `http://localhost:9100`
 
-The API will be available at `http://localhost:5000`.
+Use `http://localhost:3000` as the main entrypoint.
 
 ### 2. Environment variables in Docker
 
-The `docker-compose.yml` file sets the following for the `api` service:
+The `backend` service uses:
 
-- `NODE_ENV=development`
+- `NODE_ENV=production`
 - `PORT=5000`
-- `MONGODB_URI=mongodb://mongo:27017/webfinal`
-- `JWT_SECRET=supersecretjwt` (change this for real deployments)
+- `MONGODB_URI=mongodb://mongo:27017/webapp`
+- `JWT_SECRET=super-secret-change-me` (change for real deployments)
 - `JWT_EXPIRES_IN=1h`
 
-You can override these values using a `.env` file or by editing `docker-compose.yml` before deployment.
+### 3. Monitoring and alerting
+
+- Prometheus scrapes `backend:5000/metrics`, `node-exporter:9100`, and itself.
+- Alert rules are loaded from `alert_rules.yml`.
+- Grafana datasource and dashboard are auto-provisioned from `provisioning/`.
 
 ### 3. Production deployment
 

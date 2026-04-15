@@ -1,0 +1,19 @@
+groups:
+  - name: webapp-alerts
+    rules:
+      - alert: HighErrorRate
+        expr: (sum(increase(http_requests_total{route=~"/api.*",status=~"5.."}[5m])) / clamp_min(sum(increase(http_requests_total{route=~"/api.*"}[5m])), 1) > 0.05) and (sum(increase(http_requests_total{route=~"/api.*"}[5m])) >= 20)
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High error rate detected"
+          description: "More than 5% of requests are failing."
+      - alert: BackendDown
+        expr: up{job="backend"} == 0
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Backend service is down"
+          description: "The backend service is not responding."

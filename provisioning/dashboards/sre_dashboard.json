@@ -1,0 +1,86 @@
+{
+  "id": null,
+  "uid": "sre-dashboard",
+  "title": "SRE Golden Signals & SLOs",
+  "tags": ["sre", "golden signals", "slo"],
+  "timezone": "browser",
+  "schemaVersion": 36,
+  "version": 1,
+  "refresh": "10s",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "API Success Rate",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "(1 - (sum(increase(http_requests_total{route=~\"/api.*\",status=~\"5..\"}[1h])) / clamp_min(sum(increase(http_requests_total{route=~\"/api.*\"}[1h])), 1))) * 100",
+          "legendFormat": "Success Rate (%)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "orange", "value": 99 },
+              { "color": "green", "value": 99.5 }
+            ]
+          }
+        }
+      },
+      "gridPos": { "h": 6, "w": 8, "x": 0, "y": 0 }
+    },
+    {
+      "type": "stat",
+      "title": "Request Latency <2s (%)",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum(increase(http_request_duration_seconds_bucket{route!=\"/metrics\",le=\"2.0\"}[1h])) / clamp_min(sum(increase(http_request_duration_seconds_count{route!=\"/metrics\"}[1h])), 1) * 100",
+          "legendFormat": "<2s Requests (%)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "orange", "value": 95 },
+              { "color": "green", "value": 97 }
+            ]
+          }
+        }
+      },
+      "gridPos": { "h": 6, "w": 8, "x": 8, "y": 0 }
+    },
+    {
+      "type": "graph",
+      "title": "API 5xx Error Rate (%)",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum(increase(http_requests_total{route=~\"/api.*\",status=~\"5..\"}[15m])) / clamp_min(sum(increase(http_requests_total{route=~\"/api.*\"}[15m])), 1) * 100",
+          "legendFormat": "API 5xx (%)"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 }
+    },
+    {
+      "type": "graph",
+      "title": "CPU Usage (%)",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "100 - (avg by(instance) (irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+          "legendFormat": "CPU Usage"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 }
+    }
+  ]
+}

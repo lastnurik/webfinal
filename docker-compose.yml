@@ -1,29 +1,92 @@
-version: "3.9"
-
 services:
-  api:
-    build: .
-    ports:
-      - "5000:5000"
-    environment:
-      - NODE_ENV=development
-      - PORT=5000
-      - MONGODB_URI=mongodb://mongo:27017/webfinal
-      - JWT_SECRET=supersecretjwt
-      - JWT_EXPIRES_IN=1h
-    depends_on:
-      - mongo
-
-  mongo:
-    image: mongo:6
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: backend
     restart: always
     environment:
-      - MONGO_INITDB_DATABASE=webfinal
-    volumes:
-      - mongo-data:/data/db
+      - NODE_ENV=production
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongo:27017/webapp
+      - JWT_SECRET=super-secret-change-me
+      - JWT_EXPIRES_IN=1h
+      - ENABLE_SRE_TEST_ENDPOINT=true
+    expose:
+      - "5000"
+    depends_on:
+      - mongo
+    networks:
+      - webnet
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: frontend
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - webnet
+
+  mongo:
+    image: mongo:6.0
+    container_name: mongo
+    restart: always
     ports:
       - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - webnet
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./alert_rules.yml:/etc/prometheus/alert_rules.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"
+    networks:
+      - webnet
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./provisioning/dashboards:/etc/grafana/provisioning/dashboards
+    depends_on:
+      - prometheus
+    networks:
+      - webnet
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    ports:
+      - "9100:9100"
+    networks:
+      - webnet
 
 volumes:
   mongo-data:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  webnet:
+    driver: bridge
 
